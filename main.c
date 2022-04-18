@@ -11,7 +11,7 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include ./src/header.h
+#include ./header.h
 
 void sudoku_init(sudoku *s, int size); // Initialize a sudoku
 void sudoku_free(sudoku *s);           // free the grid
