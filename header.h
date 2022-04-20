@@ -18,7 +18,12 @@ void sudoku_init(sudoku *s, int size) { // Initialize the sudoku grid with 0 (em
         s->grid[i] = malloc(sizeof(int) * size);
     }
 }
-void sudoku_free(sudoku *s) {
+void sudoku_free(sudoku *s) { // Free the sudoku grid memory 
+    for (int i = 0; i < s->size; i++) {
+        free(s->grid[i]);
+    }
+    free(s->grid);
+}
 
 void sudoku_print(sudoku *s){ // Print the sudoku grid
     printf("-------------------------\n");
