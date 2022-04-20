@@ -18,6 +18,7 @@ void sudoku_init(sudoku *s, int size) { // Initialize the sudoku grid with 0 (em
         s->grid[i] = malloc(sizeof(int) * size);
     }
 }
+
 void sudoku_free(sudoku *s) { // Free the sudoku grid memory 
     for (int i = 0; i < s->size; i++) {
         free(s->grid[i]);
@@ -41,7 +42,16 @@ void sudoku_print(sudoku *s){ // Print the sudoku grid
         }
     }
     printf("-------------------------\n");    
+}
 
+// Generate a random number between 0 and 9 & fill the grid with it
+void sudoku_fill(sudoku *s) {
+    srand(time(NULL));
+    for (int i = 0; i < s->size; i++) {
+        for (int j = 0; j < s->size; j++) {
+            s->grid[i][j] = rand() % 10;
+        }
+    }
 }
 
 
