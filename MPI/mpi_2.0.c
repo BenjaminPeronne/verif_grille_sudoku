@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define CERT 1
-#define FALS 0
-#define DEPTH 6
-#define TABSIZE 600
+#define CERT 1 // Certificate of correctness 
+#define FALS 0 // Define the values of the cells of the sudoku table 
+#define DEPTH 6 // Depth of the search tree 
+#define TABSIZE 300 
 
 typedef struct { 
     int tabs[9][9]; // Sudoku struct definition 
@@ -185,7 +185,7 @@ int main(int nargs, char *args[]) {
         i++;
     }
 
-    // Start timer MPI
+    // Start tracking time
     double start_time = MPI_Wtime();
 
     if (id < id_limit)
@@ -205,13 +205,12 @@ int main(int nargs, char *args[]) {
 
     if (id == 0) {
         printf("For tab Size %d \n", TABSIZE);
-        printf("Number of solutions : %ld\n", sol);
-        print_table(grids[0].tabs);
+        printf("Number of solutions : %ld\n", sol);        
     }
 
     // End timer MPI
     double end_time = MPI_Wtime();
-    double total_time = end_time - start_time;
+    double total_time = (end_time - start_time);
     printf("node %d total time: %f\n", id, total_time);
 
     MPI_Barrier(MPI_COMM_WORLD);

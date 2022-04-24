@@ -6,7 +6,7 @@
  * @desc [Sudoku function]
  */
 
-typedef struct sudoku { // Sudoku struct definition
+typedef struct sudoku { // Sudoku struct definition with double pointer to int (grid) 
     int **grid; // Grid of the sudoku 
     int size; // Size of the sudoku 
 } sudoku;
