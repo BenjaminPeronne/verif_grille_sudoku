@@ -153,7 +153,7 @@ void print_table(int tabs[][9]) {
     }
 }
 
-void addem(long int *invec, long int *inoutvec, int *len, MPI_Datatype *dtype) { //
+void addem(long int *invec, long int *inoutvec, int *len, MPI_Datatype *dtype) { // 
     int i;
     for (i = 0; i < *len; i++)
         inoutvec[i] += invec[i];
@@ -161,46 +161,48 @@ void addem(long int *invec, long int *inoutvec, int *len, MPI_Datatype *dtype) {
 
 ////////////////////////////////////////////////////////////////////
 int main(int nargs, char *args[]) {
-    long int nsol = 0;
-    long int sol;
-    
-    int id, n_procc;
-    MPI_Init(NULL, NULL);
-    MPI_Comm_rank(MPI_COMM_WORLD, &id);
-    MPI_Comm_size(MPI_COMM_WORLD, &n_procc);
+    long int nsol = 0; // Nombre de solutions
+    long int sol; // Nombre de solutions 
+    int id, n_procc; // id is the id of the current process, n_procc is the number of processes
 
-    grids = (sudoku *)malloc(sizeof(sudoku) * TABSIZE);
-    pointer = 0;
-    init_grids(0, 0, 0);
+    MPI_Init(NULL, NULL); // Initialisation de MPI
+    MPI_Comm_rank(MPI_COMM_WORLD, &id); // On récupère l'id du processus
+    MPI_Comm_size(MPI_COMM_WORLD, &n_procc); // On récupère le nombre de processus
 
-    int num_elements_per_proc = pointer / n_procc;
-    int id_limit = pointer % n_procc;
-    int i = 0;
-    int j = 0;
-    while (i < id) {
-        if (i < id_limit)
-            j += num_elements_per_proc + 1;
+    grids = (sudoku *)malloc(sizeof(sudoku) * TABSIZE); // On alloue la mémoire pour les grilles
+    pointer = 0; // On initialise le pointeur de grilles à 0
+    init_grids(0, 0, 0); // On initialise les grilles
+
+    int num_elements_per_proc = pointer / n_procc; // On calcule le nombre d'éléments par processus
+    int id_limit = pointer % n_procc; // On calcule le nombre d'éléments restants
+    int i = 0; // On initialise le compteur de grilles à 0
+    int j = 0; // On initialise le compteur de processus à 0
+    while (i < id) { // Tant que l'on est pas sur le bon processus
+        if (i < id_limit) // Si il reste des éléments à envoyer
+            j += num_elements_per_proc + 1; // On ajoute un élément
         else
-            j += num_elements_per_proc;
-        i++;
+            j += num_elements_per_proc; // Sinon on ajoute pas d'élément
+        i++; // On passe au prochain processus
     }
 
     // Start tracking time
     double start_time = MPI_Wtime();
 
-    if (id < id_limit)
-        pointer = j + num_elements_per_proc + 1;
+
+    // On envoie les grilles aux autres processus
+    if (id < id_limit) // Si il reste des éléments à envoyer
+        pointer = j + num_elements_per_proc + 1; // On ajoute un élément
     else
-        pointer = j + num_elements_per_proc;
-    for (; j < pointer; j++) {
-        nsol += check(grids[j].i, grids[j].j, grids[j].tabs);
+        pointer = j + num_elements_per_proc; // Sinon on ajoute pas d'élément
+    for (; j < pointer; j++) { // Tant qu'il reste des grilles à envoyer
+        nsol += check(grids[j].i, grids[j].j, grids[j].tabs); // On teste les grilles
     }
 
-    printf("node %d found %ld solutions\n", id, nsol);
+    printf("node %d found %ld solutions\n", id, nsol); // On affiche le nombre de solutions trouvées
 
-    MPI_Op op;
-    MPI_Op_create((MPI_User_function *)addem, 1, &op);
-    MPI_Reduce(&nsol, &sol, 1, MPI_LONG_INT, op, 0, MPI_COMM_WORLD);
+    MPI_Op op; // On crée une opération pour additionner les résultats
+    MPI_Op_create((MPI_User_function *)addem, 1, &op); // On crée l'opération pour additionner les résultats
+    MPI_Reduce(&nsol, &sol, 1, MPI_LONG_INT, op, 0, MPI_COMM_WORLD); // On réduit les résultats pour obtenir le total
     // MPI_Reduce( &nsol, &sol, 1, MPI_LONG_INT, MPI_SUM, 0, MPI_COMM_WORLD );
 
     if (id == 0) {
@@ -213,7 +215,7 @@ int main(int nargs, char *args[]) {
     double total_time = (end_time - start_time);
     printf("node %d total time: %f\n", id, total_time);
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Finalize();
-    exit(0);
+    MPI_Barrier(MPI_COMM_WORLD); // On attend que tous les processus aient fini
+    MPI_Finalize(); // On termine MPI
+    exit(0); // On quitte le programme
 }

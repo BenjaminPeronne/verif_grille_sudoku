@@ -7,7 +7,7 @@
  */
 
 typedef struct sudoku { // Sudoku struct definition with double pointer to int (grid) 
-    int **grid; // Grid of the sudoku 
+    int **grid; // Grid of the sudoku with pointer to pointer to int aloid to use it as a 2D array
     int size; // Size of the sudoku 
 } sudoku;
 
@@ -83,39 +83,39 @@ void sudoku_print(sudoku *s) { // Print the sudoku grid
 }
 
 int is_exist_row(sudoku *s, int row, int value) { // Check if the value is already in the row
-    for (int i = 0; i < s->size; i++) {
-        if (s->grid[row][i] == value) {
-            return 1;
+    for (int i = 0; i < s->size; i++) { // Check if the value is already in the row
+        if (s->grid[row][i] == value) { // If the value is already in the row
+            return 1; // Return 1 to indicate that the value is already in the row
         }
     }
-    return 0;
+    return 0; // Return 0 if the value is not in the row
 }
 
 int is_exist_col(sudoku *s, int col, int value) { // Check if the value is already in the column
-    for (int i = 0; i < s->size; i++) {
-        if (s->grid[i][col] == value) {
-            return 1;
+    for (int i = 0; i < s->size; i++) { // Check if the value is already in the column
+        if (s->grid[i][col] == value) { // If the value is already in the column
+            return 1;  // Return 1 to indicate that the value is already in the column
         }
     }
-    return 0;
+    return 0; // Return 0 if the value is not in the column
 }
 
 int is_exist_square(sudoku *s, int row, int col, int value) { // Check if the value is already in the square
-    int square_size = sqrt(s->size);
-    int square_row = row - (row % square_size);
-    int square_col = col - (col % square_size);
-    for (int i = square_row; i < square_row + square_size; i++) {
-        for (int j = square_col; j < square_col + square_size; j++) {
-            if (s->grid[i][j] == value) {
-                return 1;
+    int square_size = sqrt(s->size); // Square size is the square root of the size of the sudoku 
+    int square_row = row - (row % square_size); // Square row is the row of the square where the value is located 
+    int square_col = col - (col % square_size); // Square col is the column of the square where the value is  
+    for (int i = square_row; i < square_row + square_size; i++) {  // Check if the value is already in the square 
+        for (int j = square_col; j < square_col + square_size; j++) { // Check if the value is already in the square
+            if (s->grid[i][j] == value) { // If the value is already in the square
+                return 1; // Return 1 to indicate that the value is already in the square
             }
         }
     }
-    return 0;
+    return 0; // Return 0 if the value is not in the square
 }
 
-int is_safe_number(sudoku *s, int row, int col, int value) { // Check if the value is safe to put in the grid
-    if (is_exist_row(s, row, value) || is_exist_col(s, col, value) || is_exist_square(s, row, col, value)) {
+int is_safe_number(sudoku *s, int row, int col, int value) { // Check if the value is safe to put in the grid at the row and column 
+    if (is_exist_row(s, row, value) || is_exist_col(s, col, value) || is_exist_square(s, row, col, value)) { // If the value is already in the row, column or square
         return 0; // The value is already in the grid
     }
     return 1; // The value is safe to put in the grid
@@ -160,7 +160,7 @@ int solve_sudoku_rec(sudoku *s, int row, int col) { // Solve the sudoku recursiv
         return 1;
     }
     if (s->grid[row][col] != UNASSIGNED) { // If the location is already assigned, go to the next one
-        if (col == s->size - 1) {
+        if (col == s->size - 1) { // Aller à la ligne suivante
             return solve_sudoku_rec(s, row + 1, 0); // Go to the next row
         } else {
             return solve_sudoku_rec(s, row, col + 1); // Go to the next column
@@ -174,14 +174,14 @@ int solve_sudoku_rec(sudoku *s, int row, int col) { // Solve the sudoku recursiv
                     return 1; // Return 1 if the sudoku is solved
                 }
             } else {
-                if (solve_sudoku_rec(s, row, col + 1)) {
-                    return 1;
+                if (solve_sudoku_rec(s, row, col + 1)) { // If the sudoku is solved, return 1
+                    return 1; // Return 1 if the sudoku is solved
                 }
             }
-            s->grid[row][col] = UNASSIGNED; 
+            s->grid[row][col] = UNASSIGNED;  // If the sudoku is not solved, reset the grid
         }
     }
-    return 0;
+    return 0; // Return 0 if the sudoku is not solved
 }
 
 int solve_sudoku(sudoku *s) { // Solve the sudoku
