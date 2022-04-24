@@ -387,8 +387,6 @@ On envoie les grilles aux autres processus :
 
 #### Résultat MPI
 
-![clipboard.png](VclptFADr-clipboard.png)
-
 ---
 
 #### OpenMP
@@ -509,5 +507,3 @@ int is_solve(int i, int j) {
 }
 ```
 
-![clipboard.png](uTvbQg-cN-clipboard.png)
-(à revoir)
